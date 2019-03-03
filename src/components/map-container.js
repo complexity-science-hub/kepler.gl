@@ -146,7 +146,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
       visStateActions.toggleLayerForMap(mapIndex, layerId);
     };
 
-    _setMapboxMap = (mapbox) => {
+    _setMapboxMap = mapbox => {
       if (!this._map && mapbox) {
         this._map = mapbox.getMap();
         // bind mapboxgl event listener
@@ -434,7 +434,7 @@ export default function MapContainerFactory(MapPopover, MapControl) {
           <MapComponent
             {...mapProps}
             key="bottom"
-            ref={this._setMapboxMap}
+            innerRef={this._setMapboxMap}
             mapStyle={mapStyle.bottomMapStyle}
             onClick={onMapClick}
             getCursor={this.props.hoverInfo ? () => 'pointer' : undefined}

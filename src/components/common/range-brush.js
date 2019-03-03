@@ -120,9 +120,12 @@ export default class RangeBrush extends Component {
   }
 
   render() {
-    return <StyledG className="kg-range-slider__brush"
-                    innerRef={comp => {
-      this.rootContainer = comp;
-    }}/>;
+    return (
+      <StyledG
+        className="kg-range-slider__brush"
+        innerRef={comp => {
+          this.rootContainer = comp;
+      }}/>
+    );
   }
 };
