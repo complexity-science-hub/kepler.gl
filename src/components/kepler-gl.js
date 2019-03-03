@@ -283,7 +283,7 @@ function KeplerGlFactory(
             }}
             className="kepler-gl"
             id={`kepler-gl__${id}`}
-            innerRef={node => {
+            ref={node => {
               this.root = node;
             }}
           >
