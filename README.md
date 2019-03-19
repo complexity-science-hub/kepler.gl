@@ -10,11 +10,15 @@ demonstrating the custom application and extension of kepler:
 * Run
 
       nvm install
-      npm install --save kepler.gl
+      yarn --ignore-engines
       (this will only work if the hidden .nvm file is in the root)
 
 
 # building a static app
+
+go to the app folder (in /examples) and run
+
+      yarn --ignore-engines
 
 the demo app in the example folder is by default built “hot” - meaning, there are no static output files.
 
@@ -51,7 +55,8 @@ the demo app in the example folder is by default built “hot” - meaning, ther
 **caution:** it could happen that the build process will throw a "heap out of memory" exception.
 in this case, add the following to your environment variables (osx) in order to increase the heap size:
 
-              export NODE_OPTIONS="--max-old-space-size=4096"
+              cd /kepler.gl_root/
+              export NODE_OPTIONS="--max_old_space_size=4096"
 
 **caution:** the static bundle does not work when 'appRoutes' are used in the application.
 to circumvent this issue, remove all references too appRotes from the main.js (the webpack entry point):

@@ -20,3 +20,11 @@ package-lock.json
 /index.html
 
 npm-debug.log
+
+examples/econdata-preconfig/build/bundle\.js
+
+examples/econdata-preconfig/build/bundle\.js\.map
+
+examples/econdata-preconfig/src/data/economic_loss_40k\.csv\.js
+
+examples/econdata-preconfig/src/data/economicloss146k_enh\.csv\.js
