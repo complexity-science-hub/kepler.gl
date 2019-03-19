@@ -20,6 +20,7 @@
 
 import {default as PointLayer} from './point-layer/point-layer';
 import {default as ArcLayer} from './arc-layer/arc-layer';
+import {default as TestLayer} from './test-layer/test-layer';
 import {default as LineLayer} from './line-layer/line-layer';
 import {default as GridLayer} from './grid-layer/grid-layer';
 import {default as HexagonLayer} from './hexagon-layer/hexagon-layer';
@@ -36,6 +37,7 @@ export {default as Layer} from './base-layer';
 export const KeplerGlLayers = {
   PointLayer,
   ArcLayer,
+  TestLayer,
   LineLayer,
   GridLayer,
   HexagonLayer,
@@ -49,6 +51,7 @@ export const KeplerGlLayers = {
 export const LayerClasses = {
   point: PointLayer,
   arc: ArcLayer,
+  test: TestLayer,
   line: LineLayer,
   grid: GridLayer,
   hexagon: HexagonLayer,

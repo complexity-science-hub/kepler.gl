@@ -488,7 +488,8 @@ export const LAYER_TYPES = keyMirror({
   geojson: null,
   icon: null,
   heatmap: null,
-  hexagon: null
+  hexagon: null,
+  test: null
 });
 
 export const DEFAULT_LAYER_COLOR = {

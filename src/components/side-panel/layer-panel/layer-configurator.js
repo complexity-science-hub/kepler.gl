@@ -449,6 +449,11 @@ export default class LayerConfigurator extends Component {
     );
   }
 
+  _renderTestLayerConfig(args) {
+    return this._renderLineLayerConfig(args);
+  }
+
+
   _renderArcLayerConfig(args) {
     return this._renderLineLayerConfig(args);
   }
