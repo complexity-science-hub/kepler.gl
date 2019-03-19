@@ -51,12 +51,6 @@ const CONFIG = {
         loader: 'babel-loader',
         include: join(__dirname, 'src'),
         exclude: [/node_modules/]
-      },
-      {
-        // The example has some JSON data
-        test: /\.json$/,
-        loader: 'json-loader',
-        exclude: [/node_modules/]
       }
     ]
   },

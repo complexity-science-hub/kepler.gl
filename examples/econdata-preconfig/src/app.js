@@ -42,13 +42,27 @@ const KeplerGl = require('kepler.gl/components').injectComponents([
 
 // Sample data
 /* eslint-disable no-unused-vars */
-import sampleTripData from './data/sample-trip-data';
-import sampleGeojson from './data/sample-small-geojson.json';
-import sampleGeojsonPoints from './data/sample-geojson-points.json';
-import sampleH3Data from './data/sample-hex-id-csv';
-import sampleIconCsv, {config as savedMapConfig} from './data/sample-icon-csv';
+// import sampleTripData from './data/sample-trip-data';
+// import sampleGeojson from './data/sample-small-geojson.json';
+// import sampleGeojsonPoints from './data/sample-geojson-points.json';
+// import sampleH3Data from './data/sample-hex-id-csv';
+// import sampleIconCsv, {config as savedMapConfig} from './data/sample-icon-csv';
+
 import {addDataToMap, addNotification} from 'kepler.gl/actions';
 import {processCsvData, processGeojson} from 'kepler.gl/processors';
+import Processors from 'kepler.gl/processors';
+import econData from './data/economic_loss_40k.csv';
+import econConfig from './data/econ_map-cfg';
+// import KeplerGlSchema from 'kepler.gl/dist/schemas';
+// import autConfig from './data/austria_config';
+// import deuConfig from './data/germ_config';
+// import usaConfig from './data/us_config';
+import econDataLarge from './data/economicloss146k_enh.csv';
+
+const autConfig = require('./data/austria_config.json');
+const deuConfig = require('./data/germ_config.json');
+const usaConfig = require('./data/us_config.json');
+
 /* eslint-enable no-unused-vars */
 
 const MAPBOX_TOKEN = process.env.MapboxAccessToken; // eslint-disable-line
@@ -86,6 +100,88 @@ const GlobalStyle = styled.div`
 `;
 
 class App extends Component {
+
+
+  componentDidMount() {
+    // Use processCsvData helper to convert csv file into kepler.gl structure {fields, rows}
+    const data = Processors.processCsvData(econData);
+    // Create dataset structure
+    const dataset = {
+      data,
+      info: {
+        // this is used to match the dataId defined in nyc-config.json. For more details see API documentation.
+        // It is paramount that this id matches your configuration otherwise the configuration file will be ignored.
+        id: 'my_data'
+      }
+    };
+    // addDataToMap action to inject dataset into kepler.gl instance
+    // this.props.dispatch(addDataToMap({ config: econConfig}));
+    this.props.dispatch(addDataToMap({datasets: dataset, config: econConfig}));
+
+  }
+
+
+  // This method is used as reference to show how to export the current kepler.gl instance configuration
+  // Once exported the configuration can be imported using parseSavedConfig or load method from KeplerGlSchema
+  // getMapConfig() {
+  //   // retrieve kepler.gl store
+  //   const {keplerGl} = this.props;
+  //   // retrieve current kepler.gl instance store
+  //   const {map} = keplerGl;
+  //
+  //   // create the config object
+  //   return KeplerGlSchema.getConfigToSave(map);
+  // }
+
+  // This method is used as reference to show how to export the current kepler.gl instance configuration
+  // Once exported the configuration can be imported using parseSavedConfig or load method from KeplerGlSchema
+  // exportMapConfig = () => {
+  //   // create the config object
+  //   const mapConfig = this.getMapConfig();
+  //   // save it as a json file
+  //   downloadJsonFile(mapConfig, 'kepler.gl.json');
+  // };
+
+  // Created to show how to replace dataset with new data and keeping the same configuration
+  replaceData = (scen) => {
+    // Use processCsvData helper to convert csv file into kepler.gl structure {fields, rows}
+    var config;
+    switch(scen)
+    {
+      case 0:
+        config = autConfig;
+        break;
+      case 1:
+        config = deuConfig;
+        break;
+      case 2:
+        config = usaConfig;
+        break;
+    }
+    const data = Processors.processCsvData(econDataLarge);
+
+
+    // Create dataset structure
+    const dataset = {
+      data,
+      info: {
+        id: 'my_data'
+        // this is used to match the dataId defined in nyc-config.json. For more details see API documentation.
+        // It is paramount that this id mathces your configuration otherwise the configuration file will be ignored.
+      }
+    };
+
+    // read the current configuration
+    // const config = this.getMapConfig();
+
+    // addDataToMap action to inject dataset into kepler.gl instance
+    // this.props.dispatch(addDataToMap({datasets: dataset, config: autConfig}));
+    this.props.dispatch(addDataToMap({datasets: dataset, config: config}));
+
+  };
+
+
+
   state = {
     showBanner: false,
     width: window.innerWidth,
@@ -114,18 +210,7 @@ class App extends Component {
     this._onResize();
   }
 
-  componentDidMount() {
-    // delay zs to show the banner
-    // if (!window.localStorage.getItem(BannerKey)) {
-    //   window.setTimeout(this._showBanner, 3000);
-    // }
 
-    // load sample data
-    // this._loadSampleData();
-
-    // Notifications
-    // this._loadMockNotifications();
-  }
 
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize);
@@ -173,96 +258,96 @@ class App extends Component {
     }
   }
 
-  _loadSampleData() {
-    // this._loadTripData();
-    // this._loadGeojsonData();
-    this._loadIconData();
-    this._loadH3HexagonData();
-  }
-
-  _loadTripData() {
-    this.props.dispatch(
-      addDataToMap({
-        datasets: {
-          info: {
-            label: 'Sample Taxi Trips in New York City',
-            id: 'test_trip_data'
-          },
-          data: sampleTripData
-        },
-        option: {
-          centerMap: true,
-          readOnly: false
-        },
-        config: {
-          visState: {
-            filters: [
-              {
-                id: 'me',
-                dataId: 'test_trip_data',
-                name: 'tpep_pickup_datetime',
-                type: 'timeRange',
-                enlarged: true
-              }
-            ]
-          }
-        }
-      })
-    );
-  }
-
-  _loadIconData() {
-    // load icon data and config and process csv file
-    this.props.dispatch(
-      addDataToMap({
-        datasets: [
-          {
-            info: {
-              label: 'Icon Data',
-              id: 'test_icon_data'
-            },
-            data: processCsvData(sampleIconCsv)
-          }
-        ],
-        options: {
-          centerMap: false
-        },
-        config: savedMapConfig
-      })
-    );
-  }
-
-  _loadGeojsonData() {
-    // load geojson
-    this.props.dispatch(
-      addDataToMap({
-        datasets: [{
-          info: {label: 'Bart Stops Geo'},
-          data: processGeojson(sampleGeojsonPoints)
-        }, {
-          info: {label: 'SF Zip Geo'},
-          data: processGeojson(sampleGeojson)
-        }]
-      })
-    );
-  }
-
-  _loadH3HexagonData() {
-    // load h3 hexagon
-    this.props.dispatch(
-      addDataToMap({
-        datasets: [
-          {
-            info: {
-              label: 'H3 Hexagons V2',
-              id: 'h3-hex-id'
-            },
-            data: processCsvData(sampleH3Data)
-          }
-        ]
-      })
-    );
-  }
+  // _loadSampleData() {
+  //   // this._loadTripData();
+  //   // this._loadGeojsonData();
+  //   this._loadIconData();
+  //   this._loadH3HexagonData();
+  // }
+  //
+  // _loadTripData() {
+  //   this.props.dispatch(
+  //     addDataToMap({
+  //       datasets: {
+  //         info: {
+  //           label: 'Sample Taxi Trips in New York City',
+  //           id: 'test_trip_data'
+  //         },
+  //         data: sampleTripData
+  //       },
+  //       option: {
+  //         centerMap: true,
+  //         readOnly: false
+  //       },
+  //       config: {
+  //         visState: {
+  //           filters: [
+  //             {
+  //               id: 'me',
+  //               dataId: 'test_trip_data',
+  //               name: 'tpep_pickup_datetime',
+  //               type: 'timeRange',
+  //               enlarged: true
+  //             }
+  //           ]
+  //         }
+  //       }
+  //     })
+  //   );
+  // }
+  //
+  // _loadIconData() {
+  //   // load icon data and config and process csv file
+  //   this.props.dispatch(
+  //     addDataToMap({
+  //       datasets: [
+  //         {
+  //           info: {
+  //             label: 'Icon Data',
+  //             id: 'test_icon_data'
+  //           },
+  //           data: processCsvData(sampleIconCsv)
+  //         }
+  //       ],
+  //       options: {
+  //         centerMap: false
+  //       },
+  //       config: savedMapConfig
+  //     })
+  //   );
+  // }
+  //
+  // _loadGeojsonData() {
+  //   // load geojson
+  //   this.props.dispatch(
+  //     addDataToMap({
+  //       datasets: [{
+  //         info: {label: 'Bart Stops Geo'},
+  //         data: processGeojson(sampleGeojsonPoints)
+  //       }, {
+  //         info: {label: 'SF Zip Geo'},
+  //         data: processGeojson(sampleGeojson)
+  //       }]
+  //     })
+  //   );
+  // }
+  //
+  // _loadH3HexagonData() {
+  //   // load h3 hexagon
+  //   this.props.dispatch(
+  //     addDataToMap({
+  //       datasets: [
+  //         {
+  //           info: {
+  //             label: 'H3 Hexagons V2',
+  //             id: 'h3-hex-id'
+  //           },
+  //           data: processCsvData(sampleH3Data)
+  //         }
+  //       ]
+  //     })
+  //   );
+  // }
 
   _isCloudStorageEnabled = () => {
     const {app} = this.props.demo;
@@ -286,6 +371,9 @@ class App extends Component {
   };
 
   render() {
+
+
+
     const {showBanner, width, height} = this.state;
     const {sharing} = this.props.demo;
     const rootNode = this.root;
@@ -338,6 +426,50 @@ class App extends Component {
               onSaveMap={this._isCloudStorageEnabled() && this._toggleCloudModal}
             />
           </div>
+
+
+          <button style={ {    position: 'absolute',
+            zIndex: 100,
+            bottom: 0,
+            right: -15,
+            width: '120px',
+            height: '40px',
+            backgroundColor: '#1f7cf4',
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            border: 0,
+            borderRadius: '3px',
+            fontSize: '12p}x',
+            margin:'30px'}} onClick={() => this.replaceData(0)}>Austrian Exposure</button>
+
+          <button style={ {   position: 'absolute',
+            zIndex: 100,
+            bottom: 50,
+            right: -15,
+            width: '120px',
+            height: '40px',
+            backgroundColor: '#1f7cf4',
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            border: 0,
+            borderRadius: '3px',
+            fontSize: '12px',
+            margin:'30px'}} onClick={() => this.replaceData(1)}>Ger. Autom. Shock</button>
+
+          <button style={ { position: 'absolute',
+            zIndex: 100,
+            bottom: 100,
+            right: -15,
+            width: '120px',
+            height: '40px',
+            backgroundColor: '#1f7cf4',
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            border: 0,
+            borderRadius: '3px',
+            fontSize: '12px',
+            margin:'30px'}} onClick={() => this.replaceData(2)}>US Tariff Shock</button>
+
         </GlobalStyle>
       </ThemeProvider>
 
