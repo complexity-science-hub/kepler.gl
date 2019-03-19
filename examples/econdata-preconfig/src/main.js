@@ -18,26 +18,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+
+
 import React from 'react';
 import document from 'global/document';
 import {Provider} from 'react-redux';
-import {browserHistory, Router, Route} from 'react-router';
+import {hashHistory, Router, Route} from 'react-router';
 import {syncHistoryWithStore} from 'react-router-redux';
 import {render} from 'react-dom';
 import store from './store';
 import App from './app';
-import {buildAppRoutes} from './utils/routes';
 
-const history = syncHistoryWithStore(browserHistory, store);
-
-const appRoute = buildAppRoutes(App);
+const history = syncHistoryWithStore(hashHistory, store);
 
 const Root = () => (
   <Provider store={store}>
     <Router history={history}>
-      <Route path="/" component={App}>
-        {appRoute}
-      </Route>
+      <Route path="/" component={App} />
     </Router>
   </Provider>
 );

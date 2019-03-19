@@ -3,7 +3,10 @@
     "start": "webpack-dev-server --mode development --env.es6 --progress --hot --open",
     "start-prod": "webpack-dev-server -p --env.prod --progress --hot --open",
     "start-local": "webpack-dev-server --mode development --env.es6 --progress --hot --open",
-    "start-local-es5": "webpack-dev-server --env.local --progress --hot --open"
+    "start-local-es5": "webpack-dev-server --env.local --progress --hot --open",
+    "build": "webpack --progress --env.prod",
+    "build:prod": "webpack --mode production"
+
   },
   "dependencies": {
     "d3-request": "^1.0.6",
