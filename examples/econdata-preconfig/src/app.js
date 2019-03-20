@@ -118,6 +118,13 @@ class App extends Component {
     // this.props.dispatch(addDataToMap({ config: econConfig}));
     this.props.dispatch(addDataToMap({datasets: dataset, config: econConfig}));
 
+    this._animate();
+
+  }
+
+  _animate() {
+    this.setState({});
+    this._animation = window.requestAnimationFrame(this._animate);
   }
 
 
@@ -208,12 +215,16 @@ class App extends Component {
     window.addEventListener('resize', this._onResize);
 
     this._onResize();
+    this._animate = this._animate.bind(this);
+
   }
 
 
 
   componentWillUnmount() {
     window.removeEventListener('resize', this._onResize);
+    window.cancelAnimationFrame(this._animation);
+
   }
 
   _onResize = () => {

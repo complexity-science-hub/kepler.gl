@@ -107,6 +107,38 @@ to:
     const usaConfig = require('./data/us_config.json');
 
 
+# animation support
+in order for animated deck.gl layers to work, the kepler.gl app has to request a new frame in regular intervals
+
+first, add the following method into the App class definition:
+
+    class App extends Component {
+      _animate() {
+        this.setState({});
+        this._animation = window.requestAnimationFrame(this._animate);
+      }
+
+then, add in componentDidMount() {
+
+    this._animate();
+
+add in componentWillMount() {
+//(this line is called in the App's constructor in the deck.gl examples.)
+
+    this._animate = this._animate.bind(this);
+
+and finally in componentWillUnmount() {
+
+    window.cancelAnimationFrame(this._animation);
+
+
+what happens here:
+
+- calling this.setState({}); will change the App's internal state und thus trigger the rendering of a new frame.
+- passing the animation call to window.requestAnimationFrame(this._animate); will result in an endless loop where the browser calls _animate() 60 times per second.
+- the endless loop will be interrupted when the App (component) will be unmounted.
+
+
 # writing custom deck.gl layers
 see http://vis.academy/#/custom-layers/setup
 
